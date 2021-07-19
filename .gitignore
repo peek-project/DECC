@@ -5,3 +5,4 @@ dist/
 *.exe
 *.ico
 __pycahce__
+*.spec
