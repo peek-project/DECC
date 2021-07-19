@@ -1,0 +1,7 @@
+build/
+dist/
+*.ds
+*.dsc
+*.exe
+*.ico
+__pycahce__
