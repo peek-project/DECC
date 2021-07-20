@@ -4,5 +4,5 @@ dist/
 *.dsc
 *.exe
 *.ico
-__pycahce__
+__pycache__
 *.spec
