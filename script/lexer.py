@@ -1,6 +1,7 @@
 # import the modules
 import decimal
 import ply.lex as lex
+from sys import exit
 
 # declare tokens
 tokens = [

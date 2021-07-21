@@ -5,9 +5,10 @@ import sys
 import argparse
 import script.parser
 import script.exec
+from sys import exit
 
 # program config
-version = 1.1
+version = 1.2
 
 # make argparser
 argv = argparse.ArgumentParser(description="\ndecimal script " + str(version))
@@ -75,7 +76,7 @@ else:
             if t == "quit" or t == 'q': break
             if t.split() == []: continue
             if t[-1] == ';': t = t[:-1]
-            compiled = script.parser.compile(t + "; write();")
+            compiled = script.parser.compile(t + ";\n write();")
             try:
                 if compiled: script.exec.execd(compiled)
                 else: os._exit(-1)

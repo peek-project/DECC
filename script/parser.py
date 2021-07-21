@@ -1,6 +1,7 @@
 # import the modules
 import decimal
 import ply.yacc as yacc
+from sys import exit
 
 # import lexer output
 if __name__ == "__main__": from lexer import tokens

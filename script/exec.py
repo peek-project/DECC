@@ -2,7 +2,7 @@
 stack = []
 data = [{}]
 file = {}
-file_num = 0
+file_num = 1
 
 # import the modules
 import os
@@ -10,6 +10,7 @@ import sys
 import decimal
 import script.parser
 from decimal import Decimal
+from sys import exit
 
 # define command functions
 def ADD():
@@ -163,7 +164,7 @@ def READ():
     try:
         stack.append(input())
     except:
-        exit(1)
+        stack.append(Decimal(0))
     return
 
 def FOPEN():
@@ -172,10 +173,13 @@ def FOPEN():
     global file_num
     x = stack.pop()
     y = stack.pop()
-    f = open(y, x)
-    file[file_num] = f;
-    stack.append(file_num)
-    file_num += 1
+    try:
+        f = open(y, x)
+        file[file_num] = f
+        stack.append(file_num)
+        file_num += 1
+    except:
+        stack.append(Decimal(0))
     return
 
 def FCLOSE():
@@ -289,7 +293,6 @@ def execd(code, argv=[]):
     global dic
     data[0]["argc"] = decimal.Decimal(len(sys.argv))
     data[0]["argv"] = list(sys.argv)
-    WHILE = []
     com = code.split()
     if com[0] == '{' and com[-1] == '}': com = com[1:-1]
     ptr = 0
@@ -381,19 +384,22 @@ def execd(code, argv=[]):
                 elif com[ptr] == "endelse": block -= 1
         elif state == "endelse": pass
         elif state == "while":
-            WHILE.append([stack.pop(), ptr])
-            execd(WHILE[-1][0])
+            execd(stack.pop())
             if not stack.pop():
-                ptr += 1
                 block = 1
                 while block > 0:
                     ptr += 1
                     if com[ptr] == "while": block += 1
                     elif com[ptr] == "back": block -= 1
         elif state == "back" or state == "continue":
-            dup = WHILE.pop()
-            ptr = dup[1] - 1
-            stack.append(dup[0])
+            block = 1
+            while block > 0:
+                ptr -= 1
+                if com[ptr] == "while": block -= 1
+                elif com[ptr] == "back": block += 1
+            ptr -= 1
+            while com[ptr] != '{': ptr -= 1
+            ptr -= 1
         elif state == "break":
             block = 1
             while block > 0:
