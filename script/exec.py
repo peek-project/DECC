@@ -123,18 +123,19 @@ def SET():
     y = stack.pop()
     x = stack.pop()
     a = x
+    dump = y
     if type(x) == type([]): a = x[0]
     if a in data[0]:
         if type(x) == type([]):
             if type(y) == type(decimal.Decimal(10)): exec("data[0]['" + x[0] + "']" + x[1] + " = Decimal(" + str(y) + ')')
             elif type(y) == type([]): exec("data[0]['" + x[0] + "']" + x[1] + " = " + str(y))
-            else: exec("data[0]['" + x[0] + "']" + x[1] + " = \"" + str(y) + '"')
+            else: exec("data[0]['" + x[0] + "']" + x[1] + " = dump")
         else: data[0][x] = y
         return
     if type(x) == type([]):
         if type(y) == type(decimal.Decimal(10)): exec("data[-1]['" + x[0] + "']" + x[1] + " = Decimal(" + str(y) + ')')
         elif type(y) == type([]): exec("data[-1]['" + x[0] + "']" + x[1] + " = " + str(y))
-        else: exec("data[-1]['" + x[0] + "']" + x[1] + " = \"" + str(y) + '"')
+        else: exec("data[-1]['" + x[0] + "']" + x[1] + " = dump")
     else: data[-1][x] = y
     return
 
@@ -293,7 +294,6 @@ def execd(code, argv=[]):
     global dic
     data[0]["argc"] = decimal.Decimal(len(sys.argv))
     data[0]["argv"] = list(sys.argv)
-    WHILE = []
     com = code.split()
     if com[0] == '{' and com[-1] == '}': com = com[1:-1]
     ptr = 0
@@ -385,21 +385,23 @@ def execd(code, argv=[]):
                 elif com[ptr] == "endelse": block -= 1
         elif state == "endelse": pass
         elif state == "while":
-            WHILE.append([stack.pop(), ptr])
-            execd(WHILE[-1][0])
+            execd(stack.pop())
             if not stack.pop():
-                ptr += 1
                 block = 1
                 while block > 0:
                     ptr += 1
                     if com[ptr] == "while": block += 1
                     elif com[ptr] == "back": block -= 1
         elif state == "back" or state == "continue":
-            dup = WHILE.pop()
-            ptr = dup[1] - 1
-            stack.append(dup[0])
+            block = 1
+            while block > 0:
+                ptr -= 1
+                if com[ptr] == "while": block -= 1
+                elif com[ptr] == "back": block += 1
+            ptr -= 1
+            while com[ptr] != '{': ptr -= 1
+            ptr -= 1
         elif state == "break":
-            WHILE.pop()
             block = 1
             while block > 0:
                 ptr += 1

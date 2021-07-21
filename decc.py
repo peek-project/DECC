@@ -8,7 +8,7 @@ import script.exec
 from sys import exit
 
 # program config
-version = 1.2
+version = 1.3
 
 # make argparser
 argv = argparse.ArgumentParser(description="\ndecimal script " + str(version))
